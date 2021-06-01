@@ -3,6 +3,8 @@
 
 import time
 import OpenCAN_CiA402 as op
+from canlib import canlib, Frame
+
 
 def ChannelParseData(channel):
     ch = canlib.ChannelData(channel)
@@ -10,7 +12,7 @@ def ChannelParseData(channel):
 
 
 print("Yeah it is comimg here")
-from canlib import canlib, Frame
+
 
 channel = 0
 channel1 = 1
@@ -25,6 +27,8 @@ ch0 = canlib.openChannel(channel)
 ch0.setBusOutputControl(canlib.canDRIVER_NORMAL)
 ch0.setBusParams(canlib.canBITRATE_1M)
 ch0.busOn()
+
+print("CAN bit rate",canlib.canBITRATE_1M)
 #ch1.busOff()
 
 ChannelParseData(channel1)
@@ -35,15 +39,16 @@ ch1.busOn()
 
 a = True
 
-op.Print()
-
 while a:
     try:
+        print("before")
+        op.SendCANOpen(ch0)
+        print("after")
         (msgId, msg, dlc, flg, time) = ch0.read()
         #frame = Frame(msgId, msg, flags=canlib.canMSG_EXT)
         #ch0.write(frame)
-        print(msgId, msg, dlc, flg, time)
-        print("Coming here")
+        print("Reply:",msgId, msg, dlc, flg, time)
+
         time.sleep(1)
     except:
         print("not able to send the messages")
